@@ -1,94 +1,125 @@
 /*
  * Create a list that holds all of your cards
  */
-var array = ['fa-feather','fa-feather','fa-crow','fa-crow','fa-fish','fa-fish','fa-pencil','fa-pencil','fa-power-off',
-'fa-power-off', 'fa-save', 'fa-save','fa-user-secret','fa-user-secret','fa-paperclip','fa-paperclip'];
+var array = ['fa-umbrella', 'fa-umbrella', 'fa-leaf', 'fa-leaf', 'fa-fire', 'fa-fire', 'fa-pencil',
+'fa-pencil', 'fa-power-off', 'fa-power-off', 'fa-save', 'fa-save', 'fa-user-secret', 'fa-user-secret',
+'fa-paperclip', 'fa-paperclip'];
+var starValues = [10,16];
 var matchArray = [];
 var moveCounter = 0;
-var card;
+var startCard;
+var savedCard;
+var deck = document.querySelector('.deck');
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
-
 array = shuffle(array);
-
-var deck = document.querySelector('.deck');
 const newDeck = document.createElement('ul');
-
-
-
-//const fragment = document.createDocumentFragment();
-
-for (var cardy of array) {
-  var newCard = document.createElement('li')
-  newCard.addEventListener('click',respondToClick);
-  newCard.className = 'card';
-  const newIcon = createIcon(cardy);
-  newCard.appendChild(newIcon);
-  newDeck.appendChild(newCard);
+for (var arrayCard of array) {
+	let newCard = document.createElement('li')
+	newCard.className = 'card';
+	const newIcon = createIcon(arrayCard);
+	newCard.appendChild(newIcon);
+	newDeck.appendChild(newCard);
 };
-
-//deck.replaceWith(newDeck);
-deck.innerHTML=newDeck.innerHTML;
-
- function createIcon(){
-   let newIcon = document.createElement('i');
-   newIcon.classList.add('fa',cardy);
-   return newIcon;
- };
-
-
-
+deck.innerHTML = newDeck.innerHTML;
+deck.addEventListener('click', respondToClick);
+//add icon to card html
+function createIcon() {
+	let newIcon = document.createElement('i');
+	newIcon.classList.add('fa', arrayCard);
+	return newIcon;
+}
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    let currentIndex = array.length, temporaryValue, randomIndex;
-
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-};
-
+	let currentIndex = array.length,
+		temporaryValue, randomIndex;
+	while (currentIndex !== 0) {
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex -= 1;
+		temporaryValue = array[currentIndex];
+		array[currentIndex] = array[randomIndex];
+		array[randomIndex] = temporaryValue;
+	}
+	return array;
+}
 /*
-add an event listener that flips the card, compares it with the matchArray or
-adds it to the matchArray if the array is empty.
+add an event listener that flips the card, compares it's icon with the card's icon in the matchArray
+ or adds it to the matchArray if the array is empty. Controls flip state of cards.
 */
- function respondToClick(event) {
-  card = event.target.closest('li');
-  if(!card) return;
-  if((card.classList.contains('match'))||(card.classList.contains('show'))) return;
-  let currentClasses = card.classList;
-  showCard();
-  if(matchArray.length==0){
-    matchArray.push(card);
-  }else if(matchArray.contains(currentIcon)){
-    setMatch();
-  }
-
-};
-
+function respondToClick(event) {
+	if (startCard) {
+		hideCards();
+		startCard = null;
+		savedCard = null;
+	}
+	startCard = event.target.closest('li');
+	if (!startCard) return;
+	if ((startCard.classList.contains('match')) || (startCard.classList.contains('show'))) {
+		startCard = null;
+		return;
+	}
+	let iconChild = startCard.firstChild;
+	showCard();
+	if (matchArray.length == 0) {
+		matchArray.push(startCard);
+		savedCard = startCard;
+		startCard = null;
+		return;
+	} else {
+		moveCounter++;
+		updateCounter();
+		let iconCompare = savedCard.firstChild;
+		if (iconCompare.classList[1] == iconChild.classList[1]) {
+			savedCard = matchArray.pop();
+			setMatch();
+		} else {
+			savedCard = matchArray.pop();
+		}
+	}
+}
 // shows the card  to the user
-function showCard(){
-  card.classList.add('open','show');
+function showCard() {
+	startCard.classList.add('open', 'show');
 };
+//removes the show/open functions
+function hideCards() {
+	savedCard.classList.remove('show', 'open');
+	startCard.classList.remove('show', 'open');
+}
+// sets cards as matches
+function setMatch() {
+	savedCard.classList.add('match');
+	startCard.classList.add('match');
+  if(wonGame()){
+    alert("you won w o  w");
+  }
+}
 
-// sets cards as matches, clears array
-function setMatch(){
-  const match1 = matchArray.pop();
-  match1.classList.remove('show','open');
-  match1.classList.add('match');
-  card.classList.remove('show','open');
-  card.classList.add('match');
-  moveCounter++;
-};
+function wonGame(){
+ let gameCount = document.querySelectorAll('.match');
+ return gameCount.length == 16;
+}
+
+function updateCounter() {
+	let moves = document.querySelector('.moves');
+  let stars = document.querySelector('.stars');
+	moves.innerText = moveCounter;
+
+  // compare the move # with the starValue amounts.
+  if((moveCounter > starValues[1])&&(stars.childNodes.length > 4)){ //starvalue = 16
+    //remove li & i elements
+    stars.removeChild(stars.childNodes[0]);
+    stars.removeChild(stars.childNodes[0]);
+  }else if((moveCounter > starValues[0])&&(stars.childNodes.length>6)){ //starvalue = 10
+    //remove li & i elements
+    stars.removeChild(stars.childNodes[0]);
+    stars.removeChild(stars.childNodes[0]);
+  }
+}
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
