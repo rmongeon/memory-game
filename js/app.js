@@ -1,70 +1,78 @@
 /*
  * Create a list that holds all of your cards
  */
-var array = ['fa-umbrella', 'fa-umbrella', 'fa-leaf', 'fa-leaf', 'fa-fire', 'fa-fire', 'fa-pencil',
+let cardArray = ['fa-umbrella', 'fa-umbrella', 'fa-leaf', 'fa-leaf', 'fa-fire', 'fa-fire', 'fa-pencil',
 'fa-pencil', 'fa-power-off', 'fa-power-off', 'fa-save', 'fa-save', 'fa-user-secret', 'fa-user-secret',
 'fa-paperclip', 'fa-paperclip'];
-var starValues = [10,16];
-var matchArray = [];
-var moveCounter = 0;
-var startCard;
-var savedCard;
-var deck = document.querySelector('.deck');
-var reset = document.querySelector('.restart');
-//var timerValue = 0;
-var Timer;
+const STARVALUES = [
+	10, //2 star criteria
+	16, //1 star criteria
+];
+let matchArray = [];
+let moveCounter = 0;
+let startCard;
+let savedCard;
+const deck = document.querySelector('.deck');
+const reset = document.querySelector('.restart');
+let savedTimer;
+
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
-array = shuffle(array);
+
+cardArray = shuffle(cardArray);
 updateCounter(); //clear counter to zero
 const newDeck = document.createElement('ul');
-for (var arrayCard of array) {
+
+cardArray.forEach(function(arrayCard) {
 	let newCard = document.createElement('li')
 	newCard.className = 'card';
 	const newIcon = createIcon(arrayCard);
 	newCard.appendChild(newIcon);
 	newDeck.appendChild(newCard);
-};
+});
+
 deck.innerHTML = newDeck.innerHTML;
 deck.addEventListener('click',startTimer);
 deck.addEventListener('click', respondToClick);
 reset.addEventListener('click', resetGame);
-setInitialTimerValue()
+setInitialTimerValue();
 
 function setInitialTimerValue(){
-	let timerDiv = document.querySelector('.timer');
+	const timerDiv = document.querySelector('.timer');
 	timerDiv.innerHTML = '0'+' seconds';
 }
 
 //add icon to card html
-function createIcon() {
-	let newIcon = document.createElement('i');
+function createIcon(arrayCard) {
+	const newIcon = document.createElement('i');
 	newIcon.classList.add('fa', arrayCard);
 	return newIcon;
 }
 // Shuffle function from http://stackoverflow.com/a/2450976
-function shuffle(array) {
-	let currentIndex = array.length,
+function shuffle(cardArray) {
+	let currentIndex = cardArray.length,
 		temporaryValue, randomIndex;
 	while (currentIndex !== 0) {
 		randomIndex = Math.floor(Math.random() * currentIndex);
 		currentIndex -= 1;
-		temporaryValue = array[currentIndex];
-		array[currentIndex] = array[randomIndex];
-		array[randomIndex] = temporaryValue;
+		temporaryValue = cardArray[currentIndex];
+		cardArray[currentIndex] = cardArray[randomIndex];
+		cardArray[randomIndex] = temporaryValue;
 	}
-	return array;
+	return cardArray;
 }
 
+/* startTimer begins an interval to keep track of the time spent on the memory game
 
+*/
 function startTimer(){
 	let timerDiv = document.querySelector('.timer');
-	var start = Date.now();
-	Timer = setInterval(function() {  //store Timer to clear interval later
+	let start = Date.now();
+	savedTimer = setInterval(function() {  //store savedTimer to clear interval later
     timerValue = Date.now() - start; // milliseconds elapsed since start
 
     timerDiv.innerText = (Math.floor(timerValue / 1000)) +' seconds'; // in seconds
@@ -73,24 +81,29 @@ function startTimer(){
 	}, 1000);
 	deck.removeEventListener('click',startTimer);
 }
+
 /*
-add an event listener that flips the card, compares it's icon with the card's icon in the matchArray
- or adds it to the matchArray if the array is empty. Controls flip state of cards.
+ * add an event listener that flips the card,
+ * compares its icon with the card's icon in the matchArray
+ * or adds it to the matchArray if the array is empty.
+ * if startCard has a value at the beginning of this function
+ * two cards are in the "show" mode and need to be hidden
 */
-function respondToClick(event) {
+function respondToClick() {
 	if (startCard) {
-		hideCards();
+		hideCards(startCard,savedCard);
 		startCard = null;
 		savedCard = null;
 	}
+
 	startCard = event.target.closest('li');
 	if (!startCard) return;
 	if ((startCard.classList.contains('match')) || (startCard.classList.contains('show'))) {
 		startCard = null;
 		return;
 	}
-	let iconChild = startCard.firstChild;
-	showCard();
+	const iconChild = startCard.firstChild;
+	showCard(startCard);
 	if (matchArray.length == 0) {
 		matchArray.push(startCard);
 		savedCard = startCard;
@@ -102,7 +115,7 @@ function respondToClick(event) {
 		let iconCompare = savedCard.firstChild;
 		if (iconCompare.classList[1] == iconChild.classList[1]) {
 			savedCard = matchArray.pop();
-			setMatch();
+			setMatch(startCard,savedCard);
 		} else {
 			savedCard = matchArray.pop();
 		}
@@ -113,24 +126,23 @@ function resetGame() {
   starContainer = document.querySelector('.stars');
   moveCounter=0;
   updateCounter();
-	//hideCards();
 	resetCards();
   resetStars(starContainer);
-	clearInterval(Timer);
+	clearInterval(savedTimer);
 	setInitialTimerValue();
 	deck.addEventListener('click', startTimer);
 }
 
 function resetCards(){
 	let cardParent = document.querySelectorAll('.card');
-	for (var card of cardParent){
+	cardParent.forEach(function(card){
 		card.classList.remove('match');
 		card.classList.remove('show');
 		card.classList.remove('open');
-	};
+	});
 }
 
-function resetStars(){
+function resetStars(starContainer){
   while (starContainer.childNodes.length < 3){
     let listElement = document.createElement('li');
     let starElement = document.createElement('i');
@@ -140,21 +152,22 @@ function resetStars(){
   }
 }
 
-// shows the card  to the user
-function showCard() {
+// shows the card to the user by setting the "show" classes
+function showCard(startCard) {
 	startCard.classList.add('open', 'show');
-};
+}
+
 //removes the show/open functions
-function hideCards() {
+function hideCards(startCard,savedCard) {
 	if(savedCard&&startCard) {
 	savedCard.classList.remove('show', 'open');
 	startCard.classList.remove('show', 'open');
-} else if(savedCard){
+	} else if(savedCard) {
 	savedCard.classList.remove('show', 'open');
 }
 }
 // sets cards as matches
-function setMatch() {
+function setMatch(startCard,savedCard) {
 	savedCard.classList.add('match');
 	startCard.classList.add('match');
   if(wonGame()){
@@ -163,57 +176,43 @@ function setMatch() {
 }
 
 function youWonTheGame(){
-	clearInterval(Timer);
+	clearInterval(savedTimer);
 	let timerDiv = document.querySelector('.timer');
-
-
 	alert(`you won with ${timerDiv.innerText} and ${moveCounter} moves w o  w`);
-
-	//setInitialTimerValue();
 	deck.addEventListener('click', respondToClick);
 }
 
+//check if all cards have been matched
 function wonGame(){
  let gameCount = document.querySelectorAll('.match');
  return gameCount.length == 16;
 }
 
+//increment the counter and verify the star values
 function updateCounter() {
 	 const moves = document.querySelector('.moves');
-
 	 moves.innerText = moveCounter;
-
 	 checkStars();
 }
 
+// check the star value compared to the STARVALUES array
+// and remove a star if move criteria is met.
 function checkStars(){
-
 	let starParent = document.querySelector('.stars');
-
-	for (let kid of starParent.childNodes){
-	 if (kid.nodeType == 3) { //remove node if the node is a text type
-		 starParent.removeChild(kid);
-	 }
-	}
+	starParent.childNodes.forEach(function(kid) {
+		if (kid.nodeType == 3) { //remove node if the node is a text type
+			starParent.removeChild(kid);
+		}
+	});
 
 	kids = starParent.childNodes;
 
  // compare the move # with the starValue amounts.
- if((moveCounter > starValues[1])&&(kids.length==2)){ //starvalue = 16
+ if((moveCounter > STARVALUES[1])&&(kids.length==2)){ //starvalue for 1 star
 	 //remove li & i elements
 	 starParent.removeChild(starParent.firstChild);
- }else if((moveCounter > starValues[0])&&(kids.length==3)){ //starvalue = 10
+ }else if((moveCounter > STARVALUES[0])&&(kids.length==3)){ //starvalue for 2 stars
 	 //remove li & i elements
 	 starParent.removeChild(starParent.firstChild);
  }
 }
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
