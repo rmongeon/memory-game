@@ -1,8 +1,13 @@
 /*
  * Create a list that holds all of your cards
  */
-let cardArray = ['fa-umbrella', 'fa-umbrella', 'fa-leaf', 'fa-leaf', 'fa-fire', 'fa-fire', 'fa-pencil',
-'fa-pencil', 'fa-power-off', 'fa-power-off', 'fa-save', 'fa-save', 'fa-user-secret', 'fa-user-secret',
+let cardArray = ['fa-umbrella', 'fa-umbrella',
+'fa-leaf', 'fa-leaf',
+'fa-fire', 'fa-fire',
+'fa-pencil', 'fa-pencil',
+'fa-power-off', 'fa-power-off',
+'fa-save', 'fa-save',
+'fa-user-secret', 'fa-user-secret',
 'fa-paperclip', 'fa-paperclip'];
 const STARVALUES = [
 	10, //2 star criteria
@@ -66,8 +71,8 @@ function shuffle(cardArray) {
 	return cardArray;
 }
 
-/* startTimer begins an interval to keep track of the time spent on the memory game
-
+/* startTimer begins an interval to keep
+ * track of the time spent on the memory game
 */
 function startTimer(){
 	let timerDiv = document.querySelector('.timer');
@@ -98,7 +103,8 @@ function respondToClick() {
 
 	startCard = event.target.closest('li');
 	if (!startCard) return;
-	if ((startCard.classList.contains('match')) || (startCard.classList.contains('show'))) {
+	if ((startCard.classList.contains('match')) ||
+	(startCard.classList.contains('show'))) {
 		startCard = null;
 		return;
 	}
@@ -177,8 +183,11 @@ function setMatch(startCard,savedCard) {
 
 function youWonTheGame(){
 	clearInterval(savedTimer);
-	let timerDiv = document.querySelector('.timer');
-	alert(`you won with ${timerDiv.innerText} and ${moveCounter} moves w o  w`);
+	const starParent = document.querySelector('.stars');
+	const timerDiv = document.querySelector('.timer');
+	const starNum = starParent.childNodes.length;
+	alert(`you won with ${timerDiv.innerText}, ${moveCounter} moves ` +
+		`and ${starNum} stars w o  w`);
 	deck.addEventListener('click', respondToClick);
 }
 
