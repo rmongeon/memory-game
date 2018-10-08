@@ -1,4 +1,4 @@
-# Memory Game Project
+# Memory Game
 
 ## Table of Contents
 
@@ -7,14 +7,19 @@
 
 ## Instructions
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+Click a pair of cards to show their icon. If the icons match, 
+the cards will stay face up and a different color to denote they 
+are a match. Games are timed based on the first click. The game 
+is won when all cards are face-up and matched. Your final score 
+includes the time taken to match all the cards, the total amount 
+of moves, and a star rating based on the # of moves that you made.
 
-To get started, open `js/app.js` and start building out the app's functionality
-
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
+Click the reset button to reset the cards, moves, and timer.
 
 ## Contributing
 
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
+Rebecca Mongeon
 
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+Resources from:
+Google Fonts
+FontAwesome
