@@ -113,11 +113,21 @@ function resetGame() {
   starContainer = document.querySelector('.stars');
   moveCounter=0;
   updateCounter();
-	hideCards();
+	//hideCards();
+	resetCards();
   resetStars(starContainer);
 	clearInterval(Timer);
 	setInitialTimerValue();
 	deck.addEventListener('click', startTimer);
+}
+
+function resetCards(){
+	let cardParent = document.querySelectorAll('.card');
+	for (var card of cardParent){
+		card.classList.remove('match');
+		card.classList.remove('show');
+		card.classList.remove('open');
+	};
 }
 
 function resetStars(){

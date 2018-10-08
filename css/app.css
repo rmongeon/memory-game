@@ -16,6 +16,7 @@ body {
     padding: 0;
 }
 
+
 body {
     background: #ffffff url('../img/geometry2.png'); /* Background pattern from Subtle Patterns */
     font-family: 'Coda', cursive;
@@ -29,19 +30,57 @@ body {
 }
 
 h1 {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
+    font-family: 'Arvo', serif;
+    font-weight: bold;
 }
 
 /*
  * Styles for the deck of cards
  */
 
+ @media only screen and (max-width: 440px) {
+   .deck {
+     width: 330px;
+     min-height: 340px;
+     padding: 12px;
+   }
+   .deck .card {
+       height: 85px;
+       width: 85px;
+       margin: 15px 0px 0px 0px;
+     }
+ }
+
+ /* Tablet Styles */
+ @media only screen and (min-width: 441px) and (max-width: 659px) {
+   .deck {
+     width: 440px;
+     min-height: 460px;
+     padding: 20px;
+   }
+   .deck .card {
+       height: 85px;
+       width: 85px;
+     }
+ }
+
+ /* Desktop Styles */
+ @media only screen and (min-width: 660px) {
+   .deck {
+     width: 660px;
+     min-height: 680px;
+     padding: 32px;
+   }
+   .deck .card {
+       height: 125px;
+       width: 125px;
+     }
+ }
+
 .deck {
-    width: 660px;
-    min-height: 680px;
+  display:flex;
+  flex-wrap:wrap;
     background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
-    padding: 32px;
     border-radius: 10px;
     box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
     display: flex;
@@ -52,8 +91,8 @@ h1 {
 }
 
 .deck .card {
-    height: 125px;
-    width: 125px;
+  display:flex;
+  flex-wrap:wrap;
     background: #2e3d49;
     font-size: 0;
     color: #ffffff;
@@ -89,7 +128,7 @@ h1 {
     text-align: left;
     width: 345px;
     margin-bottom: 10px;
-    border-style:solid;
+
 }
 
 .score-panel .stars {
@@ -108,8 +147,8 @@ h1 {
 .score-panel .restart {
     float: right;
     cursor: pointer;
-    border-style:solid;
 }
-.score-panel .restart {
+.score-panel .timer {
     float: right;
+    margin: 0 0 0 15px;
 }
