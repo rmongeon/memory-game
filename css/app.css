@@ -36,7 +36,7 @@ body {
    .deck .card {
        height: 85px;
        width: 85px;
-       margin: 15px 0px 0px 0px;
+       margin: 15px;
      }
  }
 
